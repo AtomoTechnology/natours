@@ -117,6 +117,8 @@ exports.protect = catchAsync(async (req, res, next) => {
 
   //grant the access
   req.user = currentUser;
+  res.locals.user = currentUser;
+
   next();
 });
 
@@ -125,13 +127,16 @@ exports.isLoggedIn = async (req, res, next) => {
   if (req.cookies.jwt) {
     try {
       // 1) verify token
-      const decoded = await promisify(jwt.verify)(req.cookies.jwt, process.env.JWT_SECRET);
+      const decoded = await promisify(jwt.verify)(req.cookies.jwt, process.env.SECRET_TOKEN_NATOURS);
+      console.log('tok', req.cookies);
+      console.log(decoded);
 
       // 2) Check if user still exists
       const currentUser = await User.findById(decoded.id);
       if (!currentUser) {
         return next();
       }
+      console.log('user : ', currentUser);
 
       // 3) Check if user changed password after the token was issued
       if (currentUser.changedPasswordAfter(decoded.iat)) {
@@ -140,6 +145,7 @@ exports.isLoggedIn = async (req, res, next) => {
 
       // THERE IS A LOGGED IN USER
       res.locals.user = currentUser;
+      console.log('user : ', currentUser);
       return next();
     } catch (err) {
       return next();

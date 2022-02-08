@@ -115,7 +115,11 @@ app.use((req, res, next) => {
 
 app.use((req, res, next) => {
   console.log('every path uses this middleware 🙇‍♂️');
+  // localStorage.setItem('token', 'token anmweyy');
+  // const token = localStorage.getItem('token') || 'tokeb empty';
+  // console.log('Locl : ', token);
   console.log(req.cookies);
+
   next();
 });
 
