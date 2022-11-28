@@ -15,10 +15,10 @@ const userSchema = new mongoose.Schema({
     lowercase: true,
     validate: [validator.isEmail, 'Please provide a valid email'],
   },
-  photo: { type: String, default: 'default.jpg' },
+  photo: { type: String, default: null },
   role: {
     type: String,
-    enum: ['user', 'guide', 'lead-guide', 'admin'],
+    enum: ['user', 'helper', 'admin'],
     default: 'user',
   },
   password: {
@@ -26,17 +26,6 @@ const userSchema = new mongoose.Schema({
     required: [true, 'Please provide a password'],
     minlength: 8,
     select: false,
-  },
-  passwordConfirm: {
-    type: String,
-    required: [true, 'Please confirm your password'],
-    validate: {
-      // This only works on CREATE and SAVE!!!
-      validator: function (el) {
-        return el === this.password;
-      },
-      message: 'Passwords are not the same!',
-    },
   },
   passwordChangedAt: Date,
   passwordResetToken: String,
@@ -57,7 +46,6 @@ userSchema.pre('save', async function (next) {
 
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password') || this.isNew) return next();
-
   this.passwordChangedAt = Date.now() - 1000;
   next();
 });
