@@ -12,7 +12,7 @@ const AppError = require('./helpers/AppError');
 const globalErrorHandler = require('./controllers/errorController');
 const usersRouter = require('./routes/usersRoutes');
 const toursRouter = require('./routes/toursRoutes');
-const reviewsRouter = require('./routes/reviewRoutes');
+const postRouter = require('./routes/postRoutes');
 const viewRouter = require('./routes/viewRoutes');
 const morgan = require('morgan');
 
@@ -133,7 +133,8 @@ app.use((req, res, next) => {
 app.use('/', viewRouter);
 app.use('/api/v1/users', usersRouter);
 app.use('/api/v1/tours', toursRouter);
-app.use('/api/v1/reviews', reviewsRouter);
+// app.use('/api/v1/posts', postsRouter);
+app.use('/api/v1/posts', postRouter);
 
 //error for any other wrong url
 app.all('*', (req, res, next) => {
