@@ -5,6 +5,7 @@ const User = require('./../model/userModel');
 const jwt = require('jsonwebtoken');
 const AppError = require('../helpers/AppError');
 const Email = require('../helpers/email');
+const Tour = require('../model/tourModel');
 
 const createToken = (id) => {
   return jwt.sign({ id }, process.env.SECRET_TOKEN_NATOURS, {
@@ -49,11 +50,18 @@ exports.signUp = catchAsync(async (req, res, next) => {
   //create token
   createSendToken(newUser, 201, res);
 });
-exports.logout = (req, res) => {
+exports.logout = async (req, res) => {
   res.cookie('jwt', 'loggedout', {
-    expires: new Date(Date.now() + 10 * 1000),
+    expires: new Date(Date.now() + 0.2 * 1000),
     httpOnly: true,
   });
+  // const tours = await Tour.find();
+
+  // res.status(200).render('overview', {
+  //   title: 'All Tours',
+  //   tours,
+  // });
+
   res.status(200).json({ status: 'success' });
 };
 
@@ -139,7 +147,7 @@ exports.isLoggedIn = async (req, res, next) => {
       console.log('user : ', currentUser);
 
       // 3) Check if user changed password after the token was issued
-      if (currentUser.changedPasswordAfter(decoded.iat)) {
+      if (currentUser.changePasswordAfter(decoded.iat)) {
         return next();
       }
 
